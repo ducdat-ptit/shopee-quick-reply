@@ -1,0 +1,123 @@
+.qra-message-button {
+  position: absolute;
+  top: -9px;
+  right: -9px;
+  z-index: 30;
+  width: 22px;
+  height: 22px;
+  border: 1px solid rgba(238, 77, 45, 0.35);
+  border-radius: 50%;
+  background: #ffffff;
+  color: #ee4d2d;
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.16);
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 700;
+  line-height: 20px;
+  padding: 0;
+  text-align: center;
+  transition: background 120ms ease, box-shadow 120ms ease, transform 120ms ease;
+}
+
+.qra-message-button:hover {
+  background: #fff5f1;
+  box-shadow: 0 4px 14px rgba(238, 77, 45, 0.22);
+  transform: translateY(-1px);
+}
+
+.qra-message-button:active {
+  transform: translateY(0);
+}
+
+.qra-message-button:focus-visible {
+  outline: 2px solid #ee4d2d;
+  outline-offset: 2px;
+}
+
+.qra-popup {
+  position: fixed;
+  z-index: 2147483647;
+  width: min(340px, calc(100vw - 16px));
+  max-height: min(420px, calc(100vh - 16px));
+  overflow: auto;
+  box-sizing: border-box;
+  padding: 14px;
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  border-radius: 8px;
+  background: #ffffff;
+  box-shadow: 0 16px 42px rgba(0, 0, 0, 0.2);
+  color: #222222;
+  font-family: Arial, "Helvetica Neue", sans-serif;
+}
+
+.qra-popup-title {
+  margin-bottom: 10px;
+  color: #111111;
+  font-size: 14px;
+  font-weight: 700;
+  line-height: 20px;
+}
+
+.qra-original-label {
+  margin-bottom: 4px;
+  color: #757575;
+  font-size: 11px;
+  font-weight: 600;
+  line-height: 16px;
+  text-transform: uppercase;
+}
+
+.qra-original-message {
+  max-height: 92px;
+  margin-bottom: 12px;
+  overflow: auto;
+  padding: 9px 10px;
+  border-radius: 6px;
+  background: #f7f8fa;
+  color: #333333;
+  font-size: 12px;
+  line-height: 18px;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+.qra-replies {
+  display: grid;
+  gap: 8px;
+}
+
+.qra-reply-button {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 9px 10px;
+  border: 1px solid #ee4d2d;
+  border-radius: 6px;
+  background: #ffffff;
+  color: #333333;
+  cursor: pointer;
+  font-family: inherit;
+  font-size: 13px;
+  line-height: 18px;
+  text-align: left;
+  white-space: normal;
+  word-break: break-word;
+}
+
+.qra-reply-button:hover {
+  background: #fff5f1;
+  color: #ee4d2d;
+}
+
+.qra-reply-button:focus-visible {
+  outline: 2px solid #ee4d2d;
+  outline-offset: 2px;
+}
+
+.qra-empty {
+  padding: 10px;
+  border-radius: 6px;
+  background: #f7f8fa;
+  color: #757575;
+  font-size: 12px;
+  line-height: 18px;
+}

@@ -1,0 +1,21 @@
+{
+  "manifest_version": 3,
+  "name": "Shopee VN Quick Reply Assistant",
+  "description": "Injects quick reply suggestions beside buyer messages in Shopee Vietnam chat.",
+  "version": "1.0.0",
+  "content_scripts": [
+    {
+      "matches": [
+        "https://shopee.vn/*",
+        "https://*.shopee.vn/*"
+      ],
+      "js": [
+        "content.js"
+      ],
+      "css": [
+        "content.css"
+      ],
+      "run_at": "document_idle"
+    }
+  ]
+}
