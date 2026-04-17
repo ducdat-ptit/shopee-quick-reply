@@ -64,19 +64,31 @@ Because Shopee uses obfuscated class names, the script combines these known clas
 
 ## Customize Reply Rules
 
-Edit `REPLY_RULES` near the top of `content.js`:
+Reply rules are stored in `reply-rules/` as one JSON file per topic. The topic files currently included are:
 
-```js
-const REPLY_RULES = [
-  {
-    keywords: ["huỷ đơn", "hủy đơn", "cancel"],
-    replies: [
-      "Shop đã nhận yêu cầu huỷ đơn của bạn.",
-      "Nếu đơn chưa giao vận chuyển, shop sẽ huỷ giúp bạn."
-    ]
-  }
-];
+- `reply-rules/cancel-order.json`
+- `reply-rules/delivery-delay.json`
+
+Each topic file has this shape:
+
+```json
+{
+  "topic": "cancel-order",
+  "keywords": ["huỷ đơn", "hủy đơn", "cancel"],
+  "replies": [
+    "Shop đã nhận yêu cầu huỷ đơn của bạn.",
+    "Nếu đơn chưa giao vận chuyển, shop sẽ huỷ giúp bạn."
+  ]
+}
 ```
+
+To add a new topic:
+
+1. Create a new JSON file in `reply-rules/`, for example `payment.json`.
+2. Add that filename to `reply-rules/index.json`.
+3. Reload the unpacked extension in `chrome://extensions`.
+
+To remove a topic, remove its filename from `reply-rules/index.json`. The JSON file can then be deleted if it is no longer needed.
 
 Matching is case-insensitive and Vietnamese diacritics are normalized before matching. For example, `huỷ đơn`, `hủy đơn`, and `huy don` all match the same normalized text.
 
@@ -85,4 +97,5 @@ Matching is case-insensitive and Vietnamese diacritics are normalized before mat
 - `manifest.json`: Manifest V3 config and Shopee Vietnam domain restrictions.
 - `content.js`: DOM detection, observer, icon injection, popup, keyword matching, and textarea insertion.
 - `content.css`: Styles for the injected icon, popup, and reply buttons.
+- `reply-rules/`: Reply topic index and per-topic reply rule JSON files.
 - `README.md`: Installation and customization notes.

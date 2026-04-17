@@ -17,5 +17,16 @@
       ],
       "run_at": "document_idle"
     }
+  ],
+  "web_accessible_resources": [
+    {
+      "resources": [
+        "reply-rules/*.json"
+      ],
+      "matches": [
+        "https://shopee.vn/*",
+        "https://*.shopee.vn/*"
+      ]
+    }
   ]
 }

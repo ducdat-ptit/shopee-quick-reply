@@ -9,29 +9,9 @@
   const POPUP_ID = "qra-suggestion-popup";
   const SCAN_DEBOUNCE_MS = 120;
   const KIND_ATTR = "quickReplyKind";
+  const REPLY_RULES_INDEX_PATH = "reply-rules/index.json";
 
-  const REPLY_RULES = [
-    {
-      keywords: ["huỷ đơn", "hủy đơn", "cancel"],
-      replies: [
-        "Shop đã nhận yêu cầu huỷ đơn của bạn.",
-        "Nếu đơn chưa giao vận chuyển, shop sẽ huỷ giúp bạn."
-      ]
-    },
-    {
-      keywords: ["lâu", "chậm", "bao giờ"],
-      replies: [
-        "Đơn hàng đang được vận chuyển, bạn vui lòng chờ thêm giúp shop nhé.",
-        "Shop xin lỗi vì sự chậm trễ, đang kiểm tra lại đơn cho bạn."
-      ]
-    }
-  ];
-
-  const compiledRules = REPLY_RULES.map((rule) => ({
-    keywords: rule.keywords.map(normalizeForMatch),
-    replies: rule.replies
-  }));
-
+  let compiledRules = [];
   let scanTimer = 0;
   let chatObserver = null;
   let bootstrapObserver = null;
@@ -41,9 +21,48 @@
   }
 
   bootstrap();
+  loadReplyRules();
 
   function isAllowedShopeeHost(hostname) {
     return hostname === ALLOWED_ROOT_DOMAIN || hostname.endsWith(`.${ALLOWED_ROOT_DOMAIN}`);
+  }
+
+  function loadReplyRules() {
+    fetchExtensionJson(REPLY_RULES_INDEX_PATH)
+      .then((index) => {
+        const files = Array.isArray(index.files) ? index.files : [];
+
+        return Promise.all(files.map((file) => fetchExtensionJson(`reply-rules/${file}`)));
+      })
+      .then((rules) => {
+        compiledRules = rules.filter(isValidReplyRule).map((rule) => ({
+          keywords: rule.keywords.map(normalizeForMatch),
+          replies: rule.replies
+        }));
+      })
+      .catch((error) => {
+        console.error("Quick Reply Assistant could not load reply rules.", error);
+      });
+  }
+
+  function fetchExtensionJson(path) {
+    return fetch(chrome.runtime.getURL(path)).then((response) => {
+      if (!response.ok) {
+        throw new Error(`Failed to load ${path}: ${response.status}`);
+      }
+
+      return response.json();
+    });
+  }
+
+  function isValidReplyRule(rule) {
+    return (
+      rule &&
+      Array.isArray(rule.keywords) &&
+      rule.keywords.every((keyword) => typeof keyword === "string") &&
+      Array.isArray(rule.replies) &&
+      rule.replies.every((reply) => typeof reply === "string")
+    );
   }
 
   function bootstrap() {

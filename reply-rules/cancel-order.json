@@ -1,0 +1,8 @@
+{
+  "topic": "cancel-order",
+  "keywords": ["huỷ đơn", "hủy đơn", "cancel"],
+  "replies": [
+    "Shop đã nhận yêu cầu huỷ đơn của bạn.",
+    "Nếu đơn chưa giao vận chuyển, shop sẽ huỷ giúp bạn."
+  ]
+}

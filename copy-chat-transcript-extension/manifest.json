@@ -1,0 +1,21 @@
+{
+  "manifest_version": 3,
+  "name": "Shopee VN Copy Chat Transcript",
+  "version": "1.0.0",
+  "description": "Copy the currently loaded Shopee Vietnam chat transcript as Q/A plain text.",
+  "content_scripts": [
+    {
+      "matches": [
+        "https://shopee.vn/*",
+        "https://*.shopee.vn/*"
+      ],
+      "js": [
+        "content.js"
+      ],
+      "css": [
+        "content.css"
+      ],
+      "run_at": "document_idle"
+    }
+  ]
+}
