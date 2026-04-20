@@ -30,7 +30,8 @@ The extension injects `content.js` and `content.css` into Shopee Vietnam pages. 
    - Text bubble: `pre.FkK7VxR2qX > .w2C67vtnXi`
    - Timestamp child removed from extraction: `.sSIhmxFOh6`
 6. Excludes seller and non-message blocks using snapshot-derived markers:
-   - Seller wrapper/direction markers: `.WTt5Zxu_wD`, `.n7tPV8kPwM`
+   - Seller direction marker: `.n7tPV8kPwM`
+   - Seller row marker: `.WTt5Zxu_wD` only when the text bubble is not inside buyer/customer direction `.qAGJYsVJQu`
    - Seller read status: `.ChatbotUI-messagereadstatus-root`
    - Order cards: `.K16n7hSTZs`
    - Product cards: `.P8CcB0wjwY`
@@ -55,7 +56,7 @@ Important patterns found in those files:
 - Message row: `.lZX8jHufoA`
 - Buyer/customer direction: `.qAGJYsVJQu`
 - Seller direction: `.n7tPV8kPwM`
-- Seller row marker: `.WTt5Zxu_wD`
+- Seller row marker: `.WTt5Zxu_wD` when no buyer/customer direction wrapper is present
 - Text content: `.w2C67vtnXi`
 - Timestamp inside text bubble: `.sSIhmxFOh6`
 - Reply textarea: `textarea.MdXquzGuDv`

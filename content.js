@@ -222,11 +222,13 @@
   }
 
   function isCustomerTextMessage(row, textElement) {
+    const customerDirectionalNode = textElement.closest(".qAGJYsVJQu");
+
     if (hasSellerMarker(row, textElement)) {
       return false;
     }
 
-    if (hasNonMessageMarker(row)) {
+    if (hasNonMessageMarker(row, textElement)) {
       return false;
     }
 
@@ -235,9 +237,9 @@
       return false;
     }
 
-    // Derived from /example_dom: buyer/customer rows use qAGJYsVJQu, while seller
-    // rows use n7tPV8kPwM and often WTt5Zxu_wD on the lZX8jHufoA wrapper.
-    const customerDirectionalNode = textElement.closest(".qAGJYsVJQu");
+    // Buyer/customer rows use qAGJYsVJQu. Recent order-chat rows may also carry
+    // WTt5Zxu_wD on the outer virtualized row, so the inner direction wrapper is
+    // the stronger signal.
     if (customerDirectionalNode) {
       return true;
     }
@@ -250,9 +252,10 @@
   function hasSellerMarker(row, textElement) {
     const rowClasses = row.classList;
     const bubble = textElement.closest("pre");
+    const hasCustomerDirectionalNode = Boolean(textElement.closest(".qAGJYsVJQu"));
 
     return (
-      rowClasses.contains("WTt5Zxu_wD") ||
+      (rowClasses.contains("WTt5Zxu_wD") && !hasCustomerDirectionalNode) ||
       Boolean(row.querySelector(".n7tPV8kPwM")) ||
       Boolean(textElement.closest(".n7tPV8kPwM")) ||
       Boolean(row.querySelector(".ChatbotUI-messagereadstatus-root")) ||
@@ -260,19 +263,24 @@
     );
   }
 
-  function hasNonMessageMarker(row) {
-    return Boolean(
-      row.querySelector(
-        [
-          ".K16n7hSTZs", // order card in div_2/div_3
-          ".P8CcB0wjwY", // product card in div_1
-          ".xQ_ZVDDSL5", // AI/question block wrapper in div_1
-          ".ujrf_CG21r", // "sent by Chat AI" metadata in div_1
-          ".EW0ojkPRCP", // warning/system block in div_2
-          ".ZpXLnW2Ey_" // warning/system block body in div_2
-        ].join(",")
-      )
-    );
+  function hasNonMessageMarker(row, textElement) {
+    const nonMessageSelector = [
+      ".K16n7hSTZs", // order card in div_2/div_3
+      ".P8CcB0wjwY", // product card in div_1
+      ".xQ_ZVDDSL5", // AI/question block wrapper in div_1
+      ".ujrf_CG21r", // "sent by Chat AI" metadata in div_1
+      ".EW0ojkPRCP", // warning/system block in div_2
+      ".ZpXLnW2Ey_" // warning/system block body in div_2
+    ].join(",");
+
+    // Some Shopee order-chat rows append a safety warning as a sibling after the
+    // customer's real text bubble. Only reject when the bubble itself belongs to
+    // a non-message block.
+    if (textElement.closest(nonMessageSelector)) {
+      return true;
+    }
+
+    return !textElement.closest("pre") && Boolean(row.querySelector(nonMessageSelector));
   }
 
   function isSystemOrAiText(text) {
