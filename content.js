@@ -10,6 +10,20 @@
   const SCAN_DEBOUNCE_MS = 120;
   const KIND_ATTR = "quickReplyKind";
   const REPLY_RULES_INDEX_PATH = "reply-rules/index.json";
+  const MAX_REPLY_SUGGESTIONS = 8;
+  const SECONDARY_RULE_SCORE_RATIO = 0.8;
+  const SECONDARY_RULE_SCORE_GAP = 18;
+  const COMMON_REPLY_SUGGESTIONS = ["Dạ", "Vâng ạ", "Dạ em kiểm tra ngay ạ"];
+  const CONTEXTUAL_REPLY_SUGGESTIONS = {
+    "urgent-delivery": ["Dạ shop gửi mình sớm nhất có thể ạ", "Dạ shop gửi mình ngay trong ca lấy hàng gần nhất ạ"],
+    "delivery-delay": ["Dạ shop xin lỗi ạ", "Dạ để shop giục vận chuyển giúp mình ạ"],
+    "shipping-carrier": ["Dạ để shop kiểm tra bên vận chuyển giúp mình ạ"],
+    "wrong-missing-item": ["Dạ shop xin lỗi ạ", "Dạ để shop kiểm tra lại đơn giúp mình ạ"],
+    "damaged-leaking": ["Dạ shop xin lỗi ạ", "Dạ bạn gửi hình ảnh giúp shop kiểm tra ngay ạ"],
+    "return-exchange": ["Dạ để shop hướng dẫn mình xử lý trên app ạ"],
+    "gift-promotion": ["Dạ để shop kiểm tra quà tặng cho mình ạ"],
+    "product-availability": ["Dạ để shop kiểm tra kho giúp mình ạ"]
+  };
 
   let compiledRules = [];
   let scanTimer = 0;
@@ -35,7 +49,9 @@
         return Promise.all(files.map((file) => fetchExtensionJson(`reply-rules/${file}`)));
       })
       .then((rules) => {
-        compiledRules = rules.filter(isValidReplyRule).map((rule) => ({
+        compiledRules = rules.filter(isValidReplyRule).map((rule, index) => ({
+          topic: rule.topic || "",
+          order: index,
           keywords: rule.keywords.map(normalizeForMatch),
           replies: rule.replies
         }));
@@ -339,15 +355,281 @@
 
   function matchReplies(messageText) {
     const normalizedMessage = normalizeForMatch(messageText);
-    const replies = [];
+    const rankedMatches = compiledRules
+      .map((rule) => scoreRuleMatch(rule, normalizedMessage))
+      .filter(Boolean)
+      .sort((left, right) => {
+        if (right.score !== left.score) {
+          return right.score - left.score;
+        }
 
-    compiledRules.forEach((rule) => {
-      if (rule.keywords.some((keyword) => normalizedMessage.includes(keyword))) {
-        replies.push(...rule.replies);
-      }
+        if (right.bestKeywordLength !== left.bestKeywordLength) {
+          return right.bestKeywordLength - left.bestKeywordLength;
+        }
+
+        return left.rule.order - right.rule.order;
+      });
+
+    if (rankedMatches.length === 0) {
+      return COMMON_REPLY_SUGGESTIONS;
+    }
+
+    const topScore = rankedMatches[0].score;
+    const selectedRules = rankedMatches.filter(
+      (match) =>
+        match.score === topScore ||
+        (match.score >= topScore * SECONDARY_RULE_SCORE_RATIO && topScore - match.score <= SECONDARY_RULE_SCORE_GAP)
+    );
+
+    const replies = [];
+    selectedRules.forEach((match) => {
+      match.rule.replies.forEach((reply) => {
+        appendReply(replies, reply);
+      });
     });
 
-    return Array.from(new Set(replies));
+    appendContextualReplies(replies, selectedRules);
+
+    COMMON_REPLY_SUGGESTIONS.forEach((reply) => {
+      appendReply(replies, reply);
+    });
+
+    return replies;
+  }
+
+  function appendContextualReplies(replies, selectedRules) {
+    selectedRules.forEach((match) => {
+      const topicReplies = CONTEXTUAL_REPLY_SUGGESTIONS[match.rule.topic] || [];
+      topicReplies.forEach((reply) => appendReply(replies, reply));
+    });
+  }
+
+  function appendReply(replies, reply) {
+    if (!replies.includes(reply) && replies.length < MAX_REPLY_SUGGESTIONS) {
+      replies.push(reply);
+    }
+  }
+
+  function scoreRuleMatch(rule, normalizedMessage) {
+    const matchedKeywords = rule.keywords.filter((keyword) => keyword && normalizedMessage.includes(keyword));
+    if (matchedKeywords.length === 0) {
+      return null;
+    }
+
+    const bestKeywordLength = Math.max(...matchedKeywords.map((keyword) => keyword.length));
+    const bestWordCount = Math.max(...matchedKeywords.map(countWords));
+    const exactPhraseBonus = matchedKeywords.some((keyword) => keyword === normalizedMessage) ? 80 : 0;
+    const edgePhraseBonus = matchedKeywords.some(
+      (keyword) => normalizedMessage.startsWith(keyword) || normalizedMessage.endsWith(keyword)
+    )
+      ? 12
+      : 0;
+
+    const score =
+      bestKeywordLength +
+      bestWordCount * 4 +
+      matchedKeywords.length * 8 +
+      exactPhraseBonus +
+      edgePhraseBonus +
+      getTopicIntentBoost(rule.topic, normalizedMessage, matchedKeywords);
+
+    return {
+      rule,
+      score,
+      bestKeywordLength
+    };
+  }
+
+  function countWords(value) {
+    return value.split(" ").filter(Boolean).length;
+  }
+
+  function getTopicIntentBoost(topic, normalizedMessage, matchedKeywords) {
+    let boost = 0;
+
+    if (topic === "urgent-delivery") {
+      if (
+        hasAnyPhrase(normalizedMessage, [
+          "giao gap",
+          "can gap",
+          "dang can",
+          "het bim",
+          "het ta",
+          "gui som",
+          "goi som",
+          "di don som",
+          "di hang som",
+          "gui luon",
+          "gui lien",
+          "goi lien",
+          "giao hang nhanh giup",
+          "giao hang nhanh nhe",
+          "can giao hang nhanh",
+          "giao hang nhanh cho",
+          "hom nay gui",
+          "hom nay giao",
+          "chua gui hang",
+          "chua di don",
+          "chua di hang",
+          "shop di don"
+        ])
+      ) {
+        boost += 55;
+      }
+    }
+
+    if (topic === "shipping-carrier") {
+      if (
+        hasAnyPhrase(normalizedMessage, [
+          "spx",
+          "ghn",
+          "giao hang nhanh",
+          "don vi van chuyen",
+          "ben van chuyen",
+          "ben vc",
+          "shipper",
+          "tai xe",
+          "buu cuc",
+          "tu hoan",
+          "hoan ve",
+          "khieu nai van chuyen"
+        ])
+      ) {
+        boost += 45;
+      }
+
+      if (
+        hasAnyPhrase(normalizedMessage, [
+          "giao gap",
+          "can gap",
+          "gui som",
+          "goi som",
+          "di don som",
+          "di hang som",
+          "gui luon",
+          "giao hang nhanh giup",
+          "giao hang nhanh nhe",
+          "hom nay gui",
+          "hom nay giao"
+        ])
+      ) {
+        boost -= 35;
+      }
+    }
+
+    if (topic === "delivery-delay") {
+      if (
+        hasAnyPhrase(normalizedMessage, [
+          "chua nhan",
+          "van chua nhan",
+          "sao chua giao",
+          "ket o",
+          "qua han giao",
+          "mai chua",
+          "lau the",
+          "cham"
+        ])
+      ) {
+        boost += 45;
+      }
+    }
+
+    if (topic === "gift-promotion") {
+      if (
+        hasAnyPhrase(normalizedMessage, [
+          "qua tang",
+          "tang qua",
+          "tang gi",
+          "duoc tang",
+          "co tang",
+          "mua 3",
+          "3 bich",
+          "3b",
+          "3g",
+          "khong hien qua",
+          "ko hien qua",
+          "ghe thu",
+          "xe choi",
+          "balo",
+          "vali",
+          "gau"
+        ])
+      ) {
+        boost += 45;
+      }
+    }
+
+    if (topic === "wrong-missing-item") {
+      if (
+        hasAnyPhrase(normalizedMessage, [
+          "giao nham",
+          "giao lon",
+          "sai hang",
+          "nham size",
+          "gui sai",
+          "gui nham",
+          "thieu hang",
+          "giao thieu",
+          "gui thieu",
+          "gui bu",
+          "khong du"
+        ])
+      ) {
+        boost += 45;
+      }
+    }
+
+    if (topic === "real-photo-product-detail") {
+      if (
+        hasAnyPhrase(normalizedMessage, [
+          "anh that",
+          "xin anh",
+          "cho xem anh",
+          "hinh qua",
+          "hinh ghe",
+          "dung nhu hinh",
+          "mau gi",
+          "kich thuoc",
+          "bao nhieu ml",
+          "huong dan lap",
+          "video huong dan",
+          "lap kieu gi"
+        ])
+      ) {
+        boost += 50;
+      }
+    }
+
+    if (topic === "diaper-size-fit") {
+      if (
+        hasAnyPhrase(normalizedMessage, [
+          "size",
+          "mac size",
+          "chon size",
+          "nen mua size",
+          "be bao kg",
+          "may kg",
+          "kg",
+          "newborn",
+          "so sinh",
+          "ta dan",
+          "ta quan",
+          "kich dui"
+        ])
+      ) {
+        boost += 35;
+      }
+    }
+
+    if (matchedKeywords.some((keyword) => keyword.length <= 4)) {
+      boost -= 12;
+    }
+
+    return boost;
+  }
+
+  function hasAnyPhrase(value, phrases) {
+    return phrases.some((phrase) => value.includes(phrase));
   }
 
   function showSuggestionsPopup(anchor, messageText) {
