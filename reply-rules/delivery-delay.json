@@ -1,8 +1,11 @@
 {
   "topic": "delivery-delay",
-  "keywords": ["lâu", "chậm", "bao giờ"],
+  "keywords": ["lâu", "chậm", "bao giờ", "bao gio", "chưa nhận được", "chua nhan duoc", "vẫn chưa nhận", "van chua nhan", "sao chưa giao", "sao chua giao", "đang ở đâu", "dang o dau", "hàng tới đâu", "hang toi dau", "kẹt ở", "ket o", "chưa thấy giao", "chua thay giao", "mãi chưa", "mai chua", "quá hạn giao", "qua han giao", "vận chuyển lâu", "van chuyen lau", "giục vận chuyển", "giuc van chuyen"],
   "replies": [
-    "Đơn hàng đang được vận chuyển, bạn vui lòng chờ thêm giúp shop nhé.",
-    "Shop xin lỗi vì sự chậm trễ, đang kiểm tra lại đơn cho bạn."
+    "Dạ shop xin lỗi vì đơn đang giao chậm hơn dự kiến. Bạn cho shop xin mã đơn hoặc chờ shop kiểm tra trạng thái vận chuyển ngay ạ.",
+    "Dạ sau khi bàn giao cho đơn vị vận chuyển, thời gian giao sẽ phụ thuộc tuyến giao và khu vực nhận hàng. Shop đang kiểm tra thêm cho bạn nhé.",
+    "Dạ bạn có thể bấm vào chi tiết đơn hàng trên app để xem mốc vận chuyển mới nhất. Nếu quá hạn dự kiến, shop sẽ hỗ trợ bạn liên hệ theo kênh của sàn.",
+    "Dạ shop sẽ giục/báo đơn vị vận chuyển giao sớm giúp bạn. Mong bạn chờ thêm giúp shop trong thời gian hệ thống cập nhật ạ.",
+    "Dạ nếu shipper không giao mà hoàn về, shop sẽ khiếu nại vận chuyển. Trường hợp đơn đã hoàn trên hệ thống thì mình cần đặt lại đơn mới giúp shop ạ."
   ]
 }

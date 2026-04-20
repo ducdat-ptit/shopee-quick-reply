@@ -1,8 +1,11 @@
 {
   "topic": "cancel-order",
-  "keywords": ["huỷ đơn", "hủy đơn", "cancel"],
+  "keywords": ["huỷ đơn", "hủy đơn", "huy don", "cancel", "không lấy nữa", "khong lay nua", "không nhận nữa", "khong nhan nua", "không có nhu cầu", "khong co nhu cau", "đặt nhầm", "dat nham", "không mua nữa", "khong mua nua", "tự hủy", "tu huy", "hủy giùm", "huy gium", "bom hàng", "bom hang"],
   "replies": [
-    "Shop đã nhận yêu cầu huỷ đơn của bạn.",
-    "Nếu đơn chưa giao vận chuyển, shop sẽ huỷ giúp bạn."
+    "Dạ nếu đơn chưa được bàn giao cho đơn vị vận chuyển, bạn có thể bấm hủy trực tiếp trên app giúp shop nhé.",
+    "Dạ shop kiểm tra giúp bạn ngay. Nếu đơn còn ở trạng thái chờ xác nhận/chờ lấy hàng, shop sẽ hỗ trợ xử lý theo quy định sàn.",
+    "Trường hợp đơn đã giao cho vận chuyển thì shop chưa thể hủy trực tiếp. Bạn vui lòng theo dõi trạng thái đơn trên app giúp shop nhé.",
+    "Dạ nếu shipper giao tới mà bạn không còn nhu cầu, bạn có thể báo shipper cho hoàn về theo quy định của sàn ạ.",
+    "Nếu bạn đặt nhầm phân loại/size, bạn có thể hủy đơn cũ và đặt lại đúng sản phẩm để shop chuẩn bị chính xác hơn ạ."
   ]
 }

@@ -1,0 +1,11 @@
+{
+  "topic": "shipping-carrier",
+  "keywords": ["spx", "giao hàng nhanh", "ghn", "đơn vị vận chuyển", "don vi van chuyen", "bên vận chuyển", "ben van chuyen", "bên vc", "ben vc", "shopee tự điều phối", "shopee tu dieu phoi", "shipper", "ship", "tài xế", "tai xe", "bưu cục", "buu cuc", "tổng đài", "tong dai", "không giao", "khong giao", "không có người giao", "khong co nguoi giao", "lấy hàng không thành công", "lay hang khong thanh cong", "tự hoàn", "tu hoan", "hoàn về", "hoan ve", "quay về", "quay ve", "khiếu nại vận chuyển", "khieu nai van chuyen", "giục bên giao", "giuc ben giao"],
+  "replies": [
+    "Dạ đơn vị vận chuyển do hệ thống Shopee điều phối theo khu vực và tình trạng đơn, shop không tự chọn/chuyển đơn vị giao được ạ.",
+    "Dạ nếu shipper không giao hoặc tự hoàn đơn, shop sẽ kiểm tra và gửi khiếu nại vận chuyển trong phạm vi hỗ trợ của sàn ạ.",
+    "Dạ nếu đơn đã chuyển trạng thái hoàn về, shop thường không kéo giao lại được. Bạn giúp shop đặt đơn mới nếu vẫn còn nhu cầu nhé.",
+    "Dạ bạn theo dõi cuộc gọi từ shipper và thông tin vận chuyển trên app. Nếu shipper báo không giao, bạn chụp lại/nhắn shop để shop kiểm tra thêm ạ.",
+    "Dạ shop đã bàn giao hàng cho vận chuyển thì thời gian giao phụ thuộc tuyến vận chuyển. Shop sẽ giục bên giao giúp bạn khi đơn bị chậm ạ."
+  ]
+}

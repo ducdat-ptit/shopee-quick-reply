@@ -64,10 +64,15 @@ Because Shopee uses obfuscated class names, the script combines these known clas
 
 ## Customize Reply Rules
 
-Reply rules are stored in `reply-rules/` as one JSON file per topic. The topic files currently included are:
+Reply rules are stored in `reply-rules/` as one JSON file per topic. The topic files include common ecommerce conversations and diaper/milk shop-specific scenarios:
 
-- `reply-rules/cancel-order.json`
-- `reply-rules/delivery-delay.json`
+- General shop chat: greeting, product availability, price/promotion, voucher, order confirmation, payment/COD, shipping fee, urgent delivery, shop location and delivery estimate.
+- Order handling: cancellation, delivery delay, address/phone change, return/exchange, wrong or missing item, damaged/leaking item, packaging, order weight limits, carrier/SPX/GHN issues, co-check, invoice, review feedback.
+- Gift programs from real conversations: buy 2/3/4/6 packs, gifts not showing on order, gift substitutions, random gift color/model, gift shortages, balo/vali/ghe thu/xe choi/gau/khan uot/bim dem.
+- Diaper consulting: size and fit, absorbency/leakage, rash/sensitive skin, pack quantity/origin/date.
+- Milk and baby food consulting: age/stage, authenticity/origin, expiry date, preparation/storage, digestion/constipation, allergy/change of formula, stock preservation, baby cereal/food, diaper and milk combos.
+
+The complete load list is maintained in `reply-rules/index.json`.
 
 Each topic file has this shape:
 
