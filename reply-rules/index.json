@@ -1,6 +1,7 @@
 {
   "files": [
     "greeting.json",
+    "customer-thanks.json",
     "product-availability.json",
     "price-promotion.json",
     "voucher.json",

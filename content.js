@@ -683,7 +683,7 @@
       document.addEventListener("click", handleOutsideClick, { capture: true });
       document.addEventListener("keydown", handleEscape, { capture: true });
       window.addEventListener("resize", closePopup, { once: true });
-      window.addEventListener("scroll", closePopup, { once: true, capture: true });
+      window.addEventListener("scroll", handleWindowScroll, { capture: true });
     }, 0);
   }
 
@@ -728,6 +728,15 @@
     }
   }
 
+  function handleWindowScroll(event) {
+    const popup = document.getElementById(POPUP_ID);
+    if (popup && popup.contains(event.target)) {
+      return;
+    }
+
+    closePopup();
+  }
+
   function closePopup() {
     const popup = document.getElementById(POPUP_ID);
     if (popup) {
@@ -736,6 +745,7 @@
 
     document.removeEventListener("click", handleOutsideClick, { capture: true });
     document.removeEventListener("keydown", handleEscape, { capture: true });
+    window.removeEventListener("scroll", handleWindowScroll, { capture: true });
   }
 
   function insertReplyIntoTextarea(reply) {
